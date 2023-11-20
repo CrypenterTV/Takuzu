@@ -1,0 +1,69 @@
+import tkinter as tk
+from tkinter import ttk, filedialog
+from takuzu_menu import TakuzuMenu
+from gridparser import GridParser
+
+#Vert
+MENU_BACKGROUND = "#41B77F"
+
+class MainMenu:
+
+    def __init__(self, root : tk.Tk) -> None:
+
+        self.root = root
+        self.root.title("TAKUZU")
+
+        window_width, window_height  = 500, 300
+
+        screen_width, screen_height = root.winfo_screenwidth(), root.winfo_screenheight()
+
+        x = (screen_width - window_width) // 2
+        y = (screen_height - window_height) // 2 - round(10/100 * (screen_height - window_height))
+
+        self.root.geometry(f"{window_width}x{window_height}+{x}+{y}")
+        self.root.resizable(False, False)
+
+        self.root.config(background=MENU_BACKGROUND)
+
+        style = ttk.Style()
+        style.configure("TButton", padding=6, relief="flat", background="#ccc")
+        
+        title_label = tk.Label(root, text="Jeu du Takuzu", font=("Courrier", 30, 'bold'), bg=MENU_BACKGROUND, fg="white")
+        title_label.pack(pady=20)
+
+
+        random_button = tk.Button(root, text="Résoudre une grille aléatoire", font=("Courrier", 15, 'bold'), bg="white", fg="black", command=print)
+        random_button.pack(pady=10)
+
+        file_button = tk.Button(root, text="Charger une grille depuis un fichier", font=("Courrier", 15, 'bold'), bg="white", fg="black", command=self.load_from_file)
+        file_button.pack(pady=10)
+
+    def load_from_file(self):
+        file_path = self.choose_file()
+        if file_path:
+            self.root.destroy()
+            r = tk.Tk()
+            parser = GridParser(file_path)
+            takuzu = parser.get_takuzu()
+            assert takuzu != None
+            print(takuzu)
+            takuzu_solved = takuzu.solve()
+            assert takuzu_solved != None
+            print(takuzu_solved)
+            print(takuzu_solved.is_valid())
+            tk_menu = TakuzuMenu(r, takuzu, takuzu_solved)
+
+
+
+    def choose_file(self):
+        file_path = filedialog.askopenfilename(title="Sélectionner un fichier", filetypes=[("Fichiers texte", "*.txt")])
+
+        return file_path
+
+    
+
+
+
+
+
+
