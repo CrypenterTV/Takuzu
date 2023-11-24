@@ -69,6 +69,18 @@ class Takuzu:
         return True
     
 
+    def is_completely_solved(self) -> bool:
+        if not self.is_valid():
+            return False
+        for row in self.__grid:
+            for n in row:
+                if (not n == 0) and (not n == 1):
+                    return False
+        return True
+
+
+    
+
     def __resolution(self, takuzu, row, col):
 
         for i in [0,1]:

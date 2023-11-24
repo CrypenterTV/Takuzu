@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import ttk, filedialog
 from takuzu_menu import TakuzuMenu
 from gridparser import GridParser
+import os
+
 
 #Vert
 MENU_BACKGROUND = "#41B77F"
@@ -22,7 +24,7 @@ class MainMenu:
         self.root = root
         self.root.title("Jeu du Takuzu")
 
-        window_width, window_height  = 500, 300
+        window_width, window_height  = 500, 350
         center_window(root, window_width, window_height)
 
         self.root.resizable(False, False)
@@ -42,6 +44,9 @@ class MainMenu:
         file_button = tk.Button(root, text="Charger une grille depuis un fichier", font=("Courrier", 15, 'bold'), bg="white", fg="black", command=self.load_from_file)
         file_button.pack(pady=10)
 
+        quit_button = tk.Button(root, text="Quitter le programme", font=("Courrier", 15, 'bold'), bg="white", fg="red", command=exit)
+        quit_button.pack(pady=10)
+
     def load_from_file(self) -> None:
 
         file_path = self.choose_file()
@@ -54,11 +59,7 @@ class MainMenu:
             takuzu = parser.get_takuzu()
             assert takuzu != None
             print(takuzu)
-            takuzu_solved = takuzu.solve()
-            assert takuzu_solved != None
-            print(takuzu_solved)
-            print(takuzu_solved.is_valid())
-            tk_menu = TakuzuMenu(r, takuzu, takuzu_solved)
+            tk_menu = TakuzuMenu(r, takuzu, file_path.split('/')[-1])
             
         
 
