@@ -78,10 +78,11 @@ class TakuzuMenu:
         menu_bar = Menu(self.root)
 
         file_menu = Menu(menu_bar, tearoff=0)
-        file_menu.add_command(label="Ouvrir", command=print)
-        file_menu.add_command(label="Enregistrer", command=print)
+        file_menu.add_command(label="Ouvrir", command=self.open_new_grid)
+        file_menu.add_command(label="Enregistrer", command=self.save_grid)
         file_menu.add_separator()
-        file_menu.add_command(label="Fermer", command=self.on_closing)
+        file_menu.add_command(label="Retour au menu", command=self.on_return_menu)
+        file_menu.add_command(label="Quitter", command=self.on_closing)
 
 
         edit_menu = Menu(menu_bar, tearoff=0)
@@ -103,8 +104,9 @@ class TakuzuMenu:
             self.takuzu_solved = self.initial_takuzu.solve()
 
         if self.takuzu_solved == None:
-            messagebox.showerror("Erreur", "La grille n'est pas résoluble")
+            messagebox.showerror("Erreur", "La grille de départ n'est pas résoluble !")
             return
+        
         for i in range(len(self.takuzu_solved.get_grid())):
             for j in range(len(self.takuzu_solved.get_grid())):
                 text = self.takuzu_solved.get_grid()[i][j]
@@ -116,10 +118,12 @@ class TakuzuMenu:
     def reset_grid(self):
         for i in range(len(self.initial_takuzu.get_grid())):
             for j in range(len(self.initial_takuzu.get_grid())):
+                self.takuzu.get_grid()[i][j] = self.initial_takuzu.get_grid()[i][j]
                 text = self.initial_takuzu.get_grid()[i][j]
                 if text == -1:
                     text  = '_'
-                self.labels[i][j].config(text=f"{text}")
+                self.labels[i][j].config(text=f"{text}", fg="black")
+
 
 
     def on_label_click(self, i, j):
@@ -154,17 +158,28 @@ class TakuzuMenu:
             self.red_labels.append(label_clicked)
         
 
+        #Si la grille est résolue par l'utilisateur
         if self.takuzu.is_completely_solved():
             for row_label in self.labels:
                 for label in row_label:
                     label.config(fg="green")
+            messagebox.showinfo("Félicitations !", "Vous avez résolu la grille avec succès !")
         
 
+    def open_new_grid(self):
+        print("Fonction d'ouverture d'une nouvelle grille...")
 
+    def save_grid(self):
+        print("Fonction de sauvegarde de la grille actuelle...")
 
 
     def on_closing(self):
-        if messagebox.askokcancel("Fermeture", "Voulez vous quitter le programme ?"):
+        if messagebox.askokcancel("Fermeture", "Voulez vous quitter le programme ? \nAttention: Tous les éléments non sauvegardés seront perdus."):
+            self.root.destroy()
+            exit(0)
+    
+    def on_return_menu(self):
+        if messagebox.askokcancel("Retour au Menu", "Voulez vous retourner au menu ? \nAttention: Tous les éléments non sauvegardés seront perdus."):
             self.root.destroy()
             subprocess.run([sys.executable, "main.py"])
 
