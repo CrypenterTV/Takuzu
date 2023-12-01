@@ -1,16 +1,12 @@
 import copy
+from random import randint, shuffle, random
 
 class Takuzu:
 
     def __init__(self, grid : list) -> None:
         self.__grid = grid
     
-    def get_grid(self) -> list:
-        return self.__grid
-    
-    def set_grid(self, grid : list) -> None:
-        self.__grid = grid
-    
+
     def row_is_unique(self, index : int) -> bool:
 
         for i in range(index):
@@ -51,6 +47,7 @@ class Takuzu:
             if i > 1:
                 if self.__grid[index][i-2] == self.__grid[index][i-1] == self.__grid[index][i] != -1:
                     return False
+                
         if len(self.__grid) / 2 == counter_0 == counter_1:
             return True
         if not is_complete:
@@ -78,8 +75,6 @@ class Takuzu:
                     return False
         return True
 
-
-    
 
     def __resolution(self, takuzu, row, col):
 
@@ -109,7 +104,7 @@ class Takuzu:
         
         return None
     
-    def solve(self):
+    def solve(self) -> 'Takuzu':
         return self.__resolution(copy.deepcopy(self), 0, 0)
     
     def __str__(self) -> str:
@@ -134,6 +129,68 @@ class Takuzu:
     
 
 
-    
-    
+    def convert_to_text_file(self) -> str:
+        sb = ""
+        for i in range(len(self.__grid)):
 
+            for j in range(len(self.__grid)):
+                text = str(self.__grid[i][j])
+
+                if text == "-1":
+                    text = "_"
+
+                sb += text
+                # Ne pas rajouter d'espace à la fin de la ligne.
+                if j < len(self.__grid) - 1:
+                    sb += " "
+
+            # Ne pas rajouter d'espace en dessous de la dernière ligne.
+            if i < len(self.__grid) - 1:
+                sb += "\n"
+        print(sb)
+        return sb
+                
+    def permute_columns(self) -> None:
+        num_columns = len(self.__grid[0])
+        
+        column_indices = list(range(num_columns))
+
+        shuffle(column_indices)
+
+        for row in self.__grid:
+
+            new_row = []
+
+            for i in column_indices:
+                new_row.append(row[i])
+            row[:] = new_row
+
+    def get_grid(self) -> list:
+        return self.__grid
+    
+    def set_grid(self, grid : list) -> None:
+        self.__grid = grid
+
+def generate_takuzu(n: int, rate : float) -> Takuzu:
+    assert n > 0 and n % 2 == 0
+    assert 0 <= rate <= 100
+
+    takuzu = Takuzu([[-1 for _ in range(n)] for _ in range(n)])
+
+    takuzu_solved = takuzu.solve()
+
+    shuffle(takuzu_solved.get_grid())
+    takuzu_solved.permute_columns()
+
+    while not takuzu_solved.is_valid():
+        shuffle(takuzu_solved.get_grid())
+        takuzu_solved.permute_columns()
+    
+    takuzu_to_solve = copy.deepcopy(takuzu_solved)
+
+    for i in range(len(takuzu_to_solve.get_grid())):
+        for j in range(len(takuzu_to_solve.get_grid())):
+            if random() * 100 < rate:
+                takuzu_to_solve.get_grid()[i][j] = - 1
+
+    return (takuzu_solved, takuzu_to_solve)

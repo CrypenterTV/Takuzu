@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, font, Menu, messagebox
+from tkinter import ttk, font, Menu, messagebox, filedialog
 from takuzu import Takuzu
 from gridparser import GridParser
 import main_menu
@@ -61,7 +61,7 @@ class TakuzuMenu:
             row_labels = []
             for j in range(len(self.takuzu.get_grid())):
                 text = self.takuzu.get_grid()[i][j]
-                text_color = "#ed9511"
+                text_color = "#ed9511" #orange
                 if text == -1:
                     text = '_'  
                     text_color = "black"  
@@ -78,7 +78,7 @@ class TakuzuMenu:
         menu_bar = Menu(self.root)
 
         file_menu = Menu(menu_bar, tearoff=0)
-        file_menu.add_command(label="Ouvrir", command=self.open_new_grid)
+        file_menu.add_command(label="Ouvrir Grille...", command=self.open_new_grid)
         file_menu.add_command(label="Enregistrer", command=self.save_grid)
         file_menu.add_separator()
         file_menu.add_command(label="Retour au menu", command=self.on_return_menu)
@@ -106,23 +106,29 @@ class TakuzuMenu:
         if self.takuzu_solved == None:
             messagebox.showerror("Erreur", "La grille de départ n'est pas résoluble !")
             return
-        
+
         for i in range(len(self.takuzu_solved.get_grid())):
             for j in range(len(self.takuzu_solved.get_grid())):
+                self.takuzu.get_grid()[i][j] = self.takuzu_solved.get_grid()[i][j]
                 text = self.takuzu_solved.get_grid()[i][j]
                 if text == -1:
                     text = '_'
-                self.labels[i][j].config(text=f"{text}")
+                self.labels[i][j].config(text=f"{text}", fg="green")
+        
+        messagebox.showinfo("Résolution", "Grille résolue avec succès !")
+        
 
 
     def reset_grid(self):
         for i in range(len(self.initial_takuzu.get_grid())):
             for j in range(len(self.initial_takuzu.get_grid())):
                 self.takuzu.get_grid()[i][j] = self.initial_takuzu.get_grid()[i][j]
+                text_color = "#ed9511"
                 text = self.initial_takuzu.get_grid()[i][j]
                 if text == -1:
                     text  = '_'
-                self.labels[i][j].config(text=f"{text}", fg="black")
+                    text_color = "black"
+                self.labels[i][j].config(text=f"{text}", fg=text_color)
 
 
 
@@ -150,7 +156,8 @@ class TakuzuMenu:
         if self.takuzu.is_valid():
             label_clicked.config(text=new_text, fg="blue")
             for label in self.red_labels:
-                label.config(fg="blue")
+                if label.cget("text") != '_':
+                    label.config(fg="blue")
             self.red_labels.clear()
 
         else:
@@ -167,10 +174,33 @@ class TakuzuMenu:
         
 
     def open_new_grid(self):
-        print("Fonction d'ouverture d'une nouvelle grille...")
+        file_path = filedialog.askopenfilename(title="Sélectionner un fichier", filetypes=[("Fichiers texte", "*.txt")])
+
+        if file_path:
+
+            if messagebox.askokcancel("Ouverture d'une nouvelle grille", "Souhaitez vous ouvrir une nouvelle grille ? \nAttention: Tous les éléments non sauvegardés seront perdus."):
+                parser = GridParser(file_path)
+                takuzu = parser.get_takuzu()
+                if takuzu == None:
+                    messagebox.showerror("Erreur", f"Le fichier {file_path} ne contient pas une grille de takuzu valide.")
+                    return
+                print(takuzu)
+                self.root.destroy()
+                r = tk.Tk()
+                tk_menu = TakuzuMenu(r, takuzu, file_path.split('/')[-1])
+
 
     def save_grid(self):
-        print("Fonction de sauvegarde de la grille actuelle...")
+        file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
+        if file_path:
+            try:
+                with open(file_path, 'w') as file:
+                    file_content = self.takuzu.convert_to_text_file()
+                    file.write(file_content)
+                    messagebox.showinfo("Enregistrement", f"Votre grille a été sauvegardée avec succès à l'emplacement : {file_path}")
+            except:
+                messagebox.showerror("Erreur", f"Echec de l'enregistrement de votre fichier à l'emplacement: {file_path}")
+                                                 
 
 
     def on_closing(self):
@@ -182,6 +212,10 @@ class TakuzuMenu:
         if messagebox.askokcancel("Retour au Menu", "Voulez vous retourner au menu ? \nAttention: Tous les éléments non sauvegardés seront perdus."):
             self.root.destroy()
             subprocess.run([sys.executable, "main.py"])
+
+
+    def set_takuzu_solved(self, takuzu_solved):
+        self.takuzu_solved = takuzu_solved
 
 
             
