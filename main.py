@@ -1,9 +1,5 @@
-from takuzu import Takuzu, generate_takuzu
-from gridparser import GridParser
 import tkinter as tk
-from tkinter import font
 from main_menu import MainMenu
-from takuzu_menu import TakuzuMenu
 
 
 

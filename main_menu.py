@@ -8,11 +8,11 @@ from takuzu import generate_takuzu
 
 # Paramètres principaux et globaux du menu
 
-MENU_BACKGROUND = "#41B77F" #Vert
+MENU_BACKGROUND = "#41B77F" # Couleur d'arrière plan des menus. (vert)
 SIZE_MENU = False
 DIFFICULTY_MENU = False
 
-# Fonction permettant de centrer 
+# Fonction permettant de centrer une fenêtre (avec un léger décalage vers le haut).
 def center_window(root : tk.Tk, window_width, window_height, percentage=10) -> None:
         screen_width, screen_height = root.winfo_screenwidth(), root.winfo_screenheight()
 
@@ -69,14 +69,12 @@ class MainMenu:
             tk_menu = TakuzuMenu(r, takuzu, file_path.split('/')[-1])
     
 
-    def choose_size_parameter(self, size, submenu) -> None:
-        #print(parameter)
+    def choose_size_parameter(self, size : int, submenu : tk.Toplevel) -> None:
         self.on_closing_size_menu(submenu)
         self.difficulty_menu(size)
 
-    def choose_diff_parameter(self, difficulty : str, submenu, size_str : str) -> None:
-        #print(parameter)
-        #print(size_str)
+    def choose_diff_parameter(self, difficulty : str, submenu : tk.Toplevel, size_str : str) -> None:
+
         self.on_closing_diff_menu(submenu)
 
         size = 4
@@ -106,7 +104,7 @@ class MainMenu:
 
 
 
-    def size_menu(self):
+    def size_menu(self) -> None:
         global SIZE_MENU
         if SIZE_MENU:
             return
@@ -126,14 +124,14 @@ class MainMenu:
             button.pack(pady=10)
 
 
-    def on_closing_size_menu(self, submenu):
+    def on_closing_size_menu(self, submenu : tk.Toplevel) -> None:
         global SIZE_MENU
         SIZE_MENU = False
         submenu.destroy()
     
 
 
-    def difficulty_menu(self, size):
+    def difficulty_menu(self, size : int) -> None:
         global DIFFICULTY_MENU
         if DIFFICULTY_MENU:
             return
@@ -153,20 +151,20 @@ class MainMenu:
             button.pack(pady=10)
         
 
-    def on_closing_diff_menu(self, submenu):
+    def on_closing_diff_menu(self, submenu : tk.Toplevel) -> None:
         global DIFFICULTY_MENU
         DIFFICULTY_MENU = False
         submenu.destroy()
 
-    def random_grid_selection(self):
+    def random_grid_selection(self) -> None:
         self.size_menu()
 
-    def choose_file(self):
+    def choose_file(self) -> str:
         file_path = filedialog.askopenfilename(title="Sélectionner un fichier", filetypes=[("Fichiers texte", "*.txt")])
 
         return file_path
     
-    def get_root(self):
+    def get_root(self) -> tk.Tk:
         return self.root
 
     

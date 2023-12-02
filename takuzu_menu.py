@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, font, Menu, messagebox, filedialog
+from tkinter import font, Menu, messagebox, filedialog
 from takuzu import Takuzu
 from gridparser import GridParser
 import main_menu
@@ -52,7 +52,7 @@ class TakuzuMenu:
 
     
 
-    def create_label_grid(self, parent):
+    def create_label_grid(self, parent : tk.LabelFrame) -> None:
         custom_font = font.nametofont("TkDefaultFont")
         custom_font.configure(size=20)
 
@@ -74,7 +74,7 @@ class TakuzuMenu:
             self.labels.append(row_labels)
 
 
-    def create_menu_bar(self):
+    def create_menu_bar(self) -> None:
         menu_bar = Menu(self.root)
 
         file_menu = Menu(menu_bar, tearoff=0)
@@ -99,7 +99,7 @@ class TakuzuMenu:
 
 
 
-    def solve_grid(self):
+    def solve_grid(self) -> None:
         if self.takuzu_solved == None:
             self.takuzu_solved = self.initial_takuzu.solve()
 
@@ -119,7 +119,7 @@ class TakuzuMenu:
         
 
 
-    def reset_grid(self):
+    def reset_grid(self) -> None:
         for i in range(len(self.initial_takuzu.get_grid())):
             for j in range(len(self.initial_takuzu.get_grid())):
                 self.takuzu.get_grid()[i][j] = self.initial_takuzu.get_grid()[i][j]
@@ -132,7 +132,7 @@ class TakuzuMenu:
 
 
 
-    def on_label_click(self, i, j):
+    def on_label_click(self, i : int, j : int) -> None:
         # Ordre: [_, 0, 1]
         label_clicked = self.labels[i][j]
         #print(self.initial_takuzu.get_grid()[i][j])
@@ -173,7 +173,7 @@ class TakuzuMenu:
             messagebox.showinfo("Félicitations !", "Vous avez résolu la grille avec succès !")
         
 
-    def open_new_grid(self):
+    def open_new_grid(self) -> None:
         file_path = filedialog.askopenfilename(title="Sélectionner un fichier", filetypes=[("Fichiers texte", "*.txt")])
 
         if file_path:
@@ -190,7 +190,7 @@ class TakuzuMenu:
                 tk_menu = TakuzuMenu(r, takuzu, file_path.split('/')[-1])
 
 
-    def save_grid(self):
+    def save_grid(self) -> None:
         file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
         if file_path:
             try:
@@ -203,18 +203,18 @@ class TakuzuMenu:
                                                  
 
 
-    def on_closing(self):
+    def on_closing(self) -> None:
         if messagebox.askokcancel("Fermeture", "Voulez vous quitter le programme ? \nAttention: Tous les éléments non sauvegardés seront perdus."):
             self.root.destroy()
             exit(0)
     
-    def on_return_menu(self):
+    def on_return_menu(self) -> None:
         if messagebox.askokcancel("Retour au Menu", "Voulez vous retourner au menu ? \nAttention: Tous les éléments non sauvegardés seront perdus."):
             self.root.destroy()
             subprocess.run([sys.executable, "main.py"])
 
 
-    def set_takuzu_solved(self, takuzu_solved):
+    def set_takuzu_solved(self, takuzu_solved : Takuzu) -> None:
         self.takuzu_solved = takuzu_solved
 
 

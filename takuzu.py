@@ -1,12 +1,14 @@
 import copy
-from random import randint, shuffle, random
+from random import shuffle, random
+
+# Classe principale modélisant une grille de Takuzu.
 
 class Takuzu:
 
     def __init__(self, grid : list) -> None:
         self.__grid = grid
     
-
+    # Fonction permettant de vérifier l'unicité d'une ligne dans la grille.
     def row_is_unique(self, index : int) -> bool:
 
         for i in range(index):
@@ -15,7 +17,10 @@ class Takuzu:
         
         return True
     
+    # Fonction permettant de vérifier la validé d'une colonne :
+    #   - 
     def col_is_valid(self, index : int) -> bool:
+
         counter_0, counter_1 = 0, 0
         is_complete = True
         for i in range(len(self.__grid)):
@@ -28,12 +33,15 @@ class Takuzu:
             if i > 1:
                 if self.__grid[i-2][index] == self.__grid[i-1][index] == self.__grid[i][index] != -1:
                     return False
+        
         if len(self.__grid) / 2 == counter_1:
             return True
         if not is_complete:
             return counter_1 <= len(self.__grid) / 2
         
+
     def row_is_valid(self, index : int) -> bool:
+
         counter_0, counter_1 = 0, 0
         is_complete = True
         for i in range(len(self.__grid)):
@@ -66,17 +74,23 @@ class Takuzu:
         return True
     
 
+
+    # Fonction permettant de vérifier si une grille est totalement completée et valide.
     def is_completely_solved(self) -> bool:
+
         if not self.is_valid():
             return False
+        
         for row in self.__grid:
-            for n in row:
-                if (not n == 0) and (not n == 1):
+            # Renvoi False si la grille contient autre chose que des 0 ou des 1.
+            for n in row: 
+                if (not n == 0) and (not n == 1): 
                     return False
+                
         return True
 
 
-    def __resolution(self, takuzu, row, col):
+    def __resolution(self, takuzu : 'Takuzu', row : int, col : int):
 
         for i in [0,1]:
 
@@ -107,6 +121,8 @@ class Takuzu:
     def solve(self) -> 'Takuzu':
         return self.__resolution(copy.deepcopy(self), 0, 0)
     
+    # Fonction permettant de représenter la grille de Takuzu sous forme 
+    # d'une chaîne de caractères.
     def __str__(self) -> str:
         
         f_string = "-"*(len(self.__grid)*3 + 2) + "\n"
@@ -125,10 +141,12 @@ class Takuzu:
             f_string += sb + "\n"
             
         f_string += "-"*(len(self.__grid)*3 + 2) + "\n"
+
         return f_string
     
 
-
+    # Fonction permettant de convertir la grille de Takuzu en chaîne de caractères sous le format 
+    # adéquat pour l'enregistrment dans un fichier texte (destinée à être analysée par le parser).
     def convert_to_text_file(self) -> str:
         sb = ""
         for i in range(len(self.__grid)):
@@ -147,7 +165,7 @@ class Takuzu:
             # Ne pas rajouter d'espace en dessous de la dernière ligne.
             if i < len(self.__grid) - 1:
                 sb += "\n"
-        print(sb)
+
         return sb
                 
     def permute_columns(self) -> None:
