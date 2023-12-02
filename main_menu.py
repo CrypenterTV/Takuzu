@@ -6,22 +6,22 @@ from random import randint
 from takuzu import generate_takuzu
 
 
-# Paramètres principaux et globaux du menu
+# Paramètres principaux et globaux du menu.
 
-MENU_BACKGROUND = "#41B77F" # Couleur d'arrière plan des menus. (vert)
+MENU_BACKGROUND = "#41B77F" # Couleur d'arrière plan des menus (vert).
 SIZE_MENU = False
 DIFFICULTY_MENU = False
 
-# Fonction permettant de centrer une fenêtre (avec un léger décalage vers le haut).
+# Fonction permettant de centrer une fenêtre (avec un léger décalage vers le haut) sur l'écran.
 def center_window(root : tk.Tk, window_width, window_height, percentage=10) -> None:
-        screen_width, screen_height = root.winfo_screenwidth(), root.winfo_screenheight()
+    screen_width, screen_height = root.winfo_screenwidth(), root.winfo_screenheight()
 
-        x = (screen_width - window_width) // 2
-        y = (screen_height - window_height) // 2 - round(percentage/100 * (screen_height - window_height))
+    x = (screen_width - window_width) // 2
+    y = (screen_height - window_height) // 2 - round(percentage/100 * (screen_height - window_height))
 
-        root.geometry(f"{window_width}x{window_height}+{x}+{y}")
+    root.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
-
+# Classe du menu principal
 class MainMenu:
 
     def __init__(self, root : tk.Tk) -> None:
@@ -29,19 +29,24 @@ class MainMenu:
         self.root = root
         self.root.title("Jeu du Takuzu")
 
+        # Dimensionnement de la fenêtre.
         window_width, window_height  = 500, 350
         center_window(root, window_width, window_height)
-
         self.root.resizable(False, False)
 
-        self.root.config(background=MENU_BACKGROUND)
+        self.root.config(background=MENU_BACKGROUND) # Couleur d'arrière plan.
 
+        # Création du style pour les boutons.
         style = ttk.Style()
         style.configure("TButton", padding=6, relief="flat", background="#ccc")
         
+        # Ajout du label du titre principal et des 3 boutons :
+        #   - "Résoudre une grille aléatoire"
+        #   - "Charger une grille depuis un fichier"
+        #   - "Quitter le programme".
+
         title_label = tk.Label(root, text="Jeu du Takuzu", font=("Courrier", 30, 'bold'), bg=MENU_BACKGROUND, fg="white")
         title_label.pack(pady=20)
-
 
         random_button = tk.Button(root, text="Résoudre une grille aléatoire", font=("Courrier", 15, 'bold'), bg="white", fg="black", command=self.random_grid_selection)
         random_button.pack(pady=10)
@@ -52,6 +57,8 @@ class MainMenu:
         quit_button = tk.Button(root, text="Quitter le programme", font=("Courrier", 15, 'bold'), bg="white", fg="red", command=exit)
         quit_button.pack(pady=10)
 
+    # Fonction permettant d'ouvrir le menu du jeu de Takuzu
+    # en chargeant une grille depuis un fichier.
     def load_from_file(self) -> None:
 
         file_path = self.choose_file()
@@ -60,15 +67,21 @@ class MainMenu:
             
             parser = GridParser(file_path)
             takuzu = parser.get_takuzu()
-            if takuzu == None:
+            if takuzu == None: 
+                # Gestion de l'erreur si le Takuzu récupéré depuis le fichier est invalide.
                 messagebox.showerror("Erreur", f"Le fichier {file_path} ne contient pas une grille de takuzu valide.")
                 return
+            
             print(takuzu)
-            self.root.destroy()
-            r = tk.Tk()
-            tk_menu = TakuzuMenu(r, takuzu, file_path.split('/')[-1])
-    
 
+            #Fermeture du menu principal.
+            self.root.destroy()
+
+            #Ouverture du nouveau menu de jeu.
+            r = tk.Tk()
+            TakuzuMenu(r, takuzu, file_path.split('/')[-1]) 
+    
+    # Fonction permettant de gérer la sélection de la taille de la grille dans le sous-menu.
     def choose_size_parameter(self, size : int, submenu : tk.Toplevel) -> None:
         self.on_closing_size_menu(submenu)
         self.difficulty_menu(size)

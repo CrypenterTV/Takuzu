@@ -3,9 +3,10 @@ from takuzu import Takuzu
 """
 Classe prenant en constructeur un chemin de fichier et
 permettant de récupérer une grille de Takuzu depuis
-un fichier texte dans un format spécifique.
+un fichier texte sous un format spécifique.
 
-    + Gestion des erreurs et des invalidités de grilles.
+    + Gestion des erreurs et des invalidités de 
+    grilles le cas échéant.
 """
 
 class GridParser:
@@ -13,7 +14,7 @@ class GridParser:
     def __init__(self, filename : str) -> None:
         self.__filename = filename
 
-    # Fonction qui tente la récupération d'une grille de Takuzu
+    # Fonction permettant la récupération d'une grille de Takuzu
     # depuis le fichier spécifié. Renvoie None en cas d'erreur.
     def get_takuzu(self) -> Takuzu:
         try:
@@ -30,10 +31,10 @@ class GridParser:
 
                 for element in row:
 
-                    if not element in [0, 1, -1]: # Elle ne peux contenir que: 0, 1 ou -1.
+                    if not element in [0, 1, -1]: # La grille ne peut contenir que: 0, 1 ou -1.
                         raise Exception
 
-                if n_rows != len(row): # Elle doit avoir autant de lignes que de colonnes. Toutes de la même taille.
+                if n_rows != len(row): # La grille doit avoir autant de lignes que de colonnes. Toutes de la même taille.
                     raise Exception
 
             return Takuzu(grid)

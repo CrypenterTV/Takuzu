@@ -18,7 +18,6 @@ class Takuzu:
         return True
     
     # Fonction permettant de vérifier la validé d'une colonne :
-    #   - 
     def col_is_valid(self, index : int) -> bool:
 
         counter_0, counter_1 = 0, 0
